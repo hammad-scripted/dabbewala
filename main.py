@@ -1,5 +1,16 @@
 from fastapi import FastAPI
 from routes.orders import router as order_router
+from contextlib import asynccontextmanager
+from database import create_tables
+
+
+@asynccontextmanager
+async def lifespan(app):
+    create_tables()
+    print("Tables created")
+    yield
+    print("Shutting down")
+
 
 app = FastAPI(
     title="Dabbewala",
@@ -8,6 +19,7 @@ app = FastAPI(
     docs_url="/docs",
     redoc_url="/redoc",
     openapi_url="/openapi.json",
+    lifespan=lifespan,
 )
 
 # register routers
